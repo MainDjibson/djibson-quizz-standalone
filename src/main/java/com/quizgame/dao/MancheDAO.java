@@ -9,7 +9,7 @@ import java.util.List;
 
 public class MancheDAO {
 
-    public void insert(Manche manche) throws SQLException {
+    public void insert(Manche manche) throws Exception {
         String sql = "INSERT INTO manche (nom) VALUES (?)";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -23,7 +23,7 @@ public class MancheDAO {
         }
     }
 
-    public Manche findById(int id) throws SQLException {
+    public Manche findById(int id) throws Exception {
         String sql = "SELECT * FROM manche WHERE id = ?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -36,7 +36,7 @@ public class MancheDAO {
         return null;
     }
 
-    public List<Manche> findAll() throws SQLException {
+    public List<Manche> findAll() throws Exception {
         List<Manche> manches = new ArrayList<>();
         String sql = "SELECT * FROM manche ORDER BY id";
         try (Connection conn = DatabaseManager.getConnection();
@@ -49,7 +49,7 @@ public class MancheDAO {
         return manches;
     }
 
-    public void update(Manche manche) throws SQLException {
+    public void update(Manche manche) throws Exception {
         String sql = "UPDATE manche SET nom = ? WHERE id = ?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -59,7 +59,7 @@ public class MancheDAO {
         }
     }
 
-    public void delete(int id) throws SQLException {
+    public void delete(int id) throws Exception {
         String sql = "DELETE FROM manche WHERE id = ?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -68,7 +68,7 @@ public class MancheDAO {
         }
     }
 
-    public long count() throws SQLException {
+    public long count() throws Exception {
         String sql = "SELECT COUNT(*) FROM manche";
         try (Connection conn = DatabaseManager.getConnection();
              Statement stmt = conn.createStatement();

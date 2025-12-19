@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ParametreJeuDAO {
 
-    public void insert(ParametreJeu parametre) throws SQLException {
+    public void insert(ParametreJeu parametre) throws Exception {
         String sql = "INSERT INTO parametre_jeu (cle, valeur) VALUES (?, ?)";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -19,7 +19,7 @@ public class ParametreJeuDAO {
         }
     }
 
-    public ParametreJeu findByCle(String cle) throws SQLException {
+    public ParametreJeu findByCle(String cle) throws Exception {
         String sql = "SELECT * FROM parametre_jeu WHERE cle = ?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -32,7 +32,7 @@ public class ParametreJeuDAO {
         return null;
     }
 
-    public List<ParametreJeu> findAll() throws SQLException {
+    public List<ParametreJeu> findAll() throws Exception {
         List<ParametreJeu> parametres = new ArrayList<>();
         String sql = "SELECT * FROM parametre_jeu ORDER BY cle";
         try (Connection conn = DatabaseManager.getConnection();
@@ -45,7 +45,7 @@ public class ParametreJeuDAO {
         return parametres;
     }
 
-    public void update(ParametreJeu parametre) throws SQLException {
+    public void update(ParametreJeu parametre) throws Exception {
         String sql = "UPDATE parametre_jeu SET valeur = ? WHERE cle = ?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -55,7 +55,7 @@ public class ParametreJeuDAO {
         }
     }
 
-    public void upsert(String cle, String valeur) throws SQLException {
+    public void upsert(String cle, String valeur) throws Exception {
         ParametreJeu existing = findByCle(cle);
         if (existing != null) {
             existing.setValeur(valeur);
@@ -65,7 +65,7 @@ public class ParametreJeuDAO {
         }
     }
 
-    public void delete(String cle) throws SQLException {
+    public void delete(String cle) throws Exception {
         String sql = "DELETE FROM parametre_jeu WHERE cle = ?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -74,12 +74,12 @@ public class ParametreJeuDAO {
         }
     }
 
-    public String getValeur(String cle, String defaut) throws SQLException {
+    public String getValeur(String cle, String defaut) throws Exception {
         ParametreJeu param = findByCle(cle);
         return param != null ? param.getValeur() : defaut;
     }
 
-    public int getValeurInt(String cle, int defaut) throws SQLException {
+    public int getValeurInt(String cle, int defaut) throws Exception {
         String valeur = getValeur(cle, String.valueOf(defaut));
         try {
             return Integer.parseInt(valeur);
@@ -88,7 +88,7 @@ public class ParametreJeuDAO {
         }
     }
 
-    public boolean getValeurBoolean(String cle, boolean defaut) throws SQLException {
+    public boolean getValeurBoolean(String cle, boolean defaut) throws Exception {
         String valeur = getValeur(cle, String.valueOf(defaut));
         return Boolean.parseBoolean(valeur);
     }

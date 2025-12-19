@@ -17,7 +17,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.util.Duration;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public class Manche4Controller {
@@ -108,7 +107,7 @@ public class Manche4Controller {
             if (questions.size() > maxQuestions) {
                 questions = questions.subList(0, maxQuestions);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             feedbackLabel.setText("Erreur : " + e.getMessage());
             feedbackLabel.setStyle("-fx-text-fill: red;");
         }
@@ -130,7 +129,7 @@ public class Manche4Controller {
         try {
             int scoreRequis = gameService.getScoreRequisFinale();
             scoreLabel.setText("Bonnes réponses : " + score + " / " + questions.size() + " (minimum : " + scoreRequis + ")");
-        } catch (SQLException e) {
+        } catch (Exception e) {
             scoreLabel.setText("Bonnes réponses : " + score + " / " + questions.size());
         }
         
@@ -159,7 +158,7 @@ public class Manche4Controller {
                     (correctAnswer != null ? correctAnswer.getLibelle() : "N/A"));
                 feedbackLabel.setStyle("-fx-text-fill: #f44336; -fx-font-size: 18px;");
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             feedbackLabel.setText("Erreur : " + e.getMessage());
             feedbackLabel.setStyle("-fx-text-fill: red;");
         }

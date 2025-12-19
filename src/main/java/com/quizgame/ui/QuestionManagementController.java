@@ -14,8 +14,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
-import java.sql.SQLException;
-import java.util.List;
+import java.util.List; 
 import java.util.Optional;
 
 public class QuestionManagementController {
@@ -63,7 +62,7 @@ public class QuestionManagementController {
         mancheFilter.getItems().add(new Manche(0, "Toutes les manches"));
         try {
             mancheFilter.getItems().addAll(mancheDAO.findAll());
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         mancheFilter.getSelectionModel().selectFirst();
@@ -147,7 +146,7 @@ public class QuestionManagementController {
             } else {
                 questionList.addAll(questionDAO.findByManche(mancheId));
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             showError("Erreur", "Impossible de charger les questions : " + e.getMessage());
         }
     }
@@ -187,7 +186,7 @@ public class QuestionManagementController {
             List<Reponse> reponses = reponseDAO.findByQuestion(selected.getId());
             ReponseManagementDialog dialog = new ReponseManagementDialog(selected, reponses);
             dialog.showAndWait();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             showError("Erreur", "Impossible de charger les réponses : " + e.getMessage());
         }
     }
@@ -210,7 +209,7 @@ public class QuestionManagementController {
                     questionDAO.delete(selected.getId());
                     Manche selectedManche = mancheFilter.getSelectionModel().getSelectedItem();
                     loadQuestions(selectedManche != null ? selectedManche.getId() : 0);
-                } catch (SQLException e) {
+                } catch (Exception e) {
                     showError("Erreur", "Impossible de supprimer la question : " + e.getMessage());
                 }
             }
@@ -286,7 +285,7 @@ public class QuestionManagementController {
             ComboBox<Manche> mancheCombo = new ComboBox<>();
             try {
                 mancheCombo.getItems().addAll(mancheDAO.findAll());
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -304,7 +303,7 @@ public class QuestionManagementController {
                 try {
                     Manche m = mancheDAO.findById(question.getIdManche());
                     mancheCombo.getSelectionModel().select(m);
-                } catch (SQLException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 pointsField.setText(String.valueOf(question.getPoints()));
@@ -440,7 +439,7 @@ public class QuestionManagementController {
             try {
                 reponseDAO.delete(selected.getId());
                 reponseList.remove(selected);
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 showError("Erreur", "Impossible de supprimer : " + e.getMessage());
             }
         }
@@ -500,7 +499,7 @@ public class QuestionManagementController {
                             rDAO.update(r);
                         }
                         return r;
-                    } catch (SQLException e) {
+                    } catch (Exception e) {
                         showError("Erreur", "Impossible de sauvegarder : " + e.getMessage());
                         return null;
                     }

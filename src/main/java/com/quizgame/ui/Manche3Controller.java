@@ -12,13 +12,11 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.util.Duration;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public class Manche3Controller {
@@ -123,7 +121,7 @@ public class Manche3Controller {
             if (questions.size() > maxQuestions) {
                 questions = questions.subList(0, maxQuestions);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             feedbackLabel.setText("Erreur : " + e.getMessage());
             feedbackLabel.setStyle("-fx-text-fill: red;");
         }
@@ -147,7 +145,7 @@ public class Manche3Controller {
         try {
             int scoreRequis = gameService.getScoreRequisManche3();
             scoreLabel.setText("Score : " + score + " / " + scoreRequis);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             scoreLabel.setText("Score : " + score);
         }
     }
@@ -168,13 +166,13 @@ public class Manche3Controller {
             } else if ("CASH".equals(mode)) {
                 showCashMode(q);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             feedbackLabel.setText("Erreur : " + e.getMessage());
             feedbackLabel.setStyle("-fx-text-fill: red;");
         }
     }
 
-    private void showDuoMode(Question q) throws SQLException {
+    private void showDuoMode(Question q) throws Exception {
         Label modeLabel = new Label("Mode DUO - 2 réponses");
         modeLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
         modeLabel.setStyle("-fx-text-fill: #2196F3;");
@@ -202,7 +200,7 @@ public class Manche3Controller {
         answerBox.getChildren().addAll(modeLabel, optionsBox);
     }
 
-    private void showCarreMode(Question q) throws SQLException {
+    private void showCarreMode(Question q) throws Exception {
         Label modeLabel = new Label("Mode CARRÉ - 4 réponses");
         modeLabel.setFont(Font.font("Arial", FontWeight.BOLD, 18));
         modeLabel.setStyle("-fx-text-fill: #FF9800;");
@@ -254,7 +252,7 @@ public class Manche3Controller {
         answerField.setOnAction(e -> {
             try {
                 validateCashAnswer(answerField.getText(), q);
-            } catch (SQLException ex) {
+            } catch (Exception ex) {
                 feedbackLabel.setText("Erreur : " + ex.getMessage());
                 feedbackLabel.setStyle("-fx-text-fill: red;");
             }
@@ -262,7 +260,7 @@ public class Manche3Controller {
         btnValidate.setOnAction(e -> {
             try {
                 validateCashAnswer(answerField.getText(), q);
-            } catch (SQLException ex) {
+            } catch (Exception ex) {
                 feedbackLabel.setText("Erreur : " + ex.getMessage());
                 feedbackLabel.setStyle("-fx-text-fill: red;");
             }
@@ -287,7 +285,7 @@ public class Manche3Controller {
         proceedToNextQuestion();
     }
 
-    private void validateCashAnswer(String userAnswer, Question q) throws SQLException {
+    private void validateCashAnswer(String userAnswer, Question q) throws Exception {
         answerBox.setVisible(false);
         
         Reponse correctAnswer = gameService.getCorrectAnswer(q.getId());

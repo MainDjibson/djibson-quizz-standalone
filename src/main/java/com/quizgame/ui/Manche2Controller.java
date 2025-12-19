@@ -18,7 +18,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.util.Duration;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public class Manche2Controller {
@@ -126,7 +125,7 @@ public class Manche2Controller {
             if (questions.size() > maxQuestions) {
                 questions = questions.subList(0, maxQuestions);
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             feedbackLabel.setText("Erreur : " + e.getMessage());
             feedbackLabel.setStyle("-fx-text-fill: red;");
         }
@@ -135,7 +134,7 @@ public class Manche2Controller {
     private void startGlobalTimer() {
         try {
             globalTimeRemaining = gameService.getChronoManche2Secondes();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             globalTimeRemaining = 120;
         }
 
@@ -204,7 +203,7 @@ public class Manche2Controller {
                         delay.play();
                         return;
                     }
-                } catch (SQLException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 
@@ -217,7 +216,7 @@ public class Manche2Controller {
             }
             
             updateSerieLabels();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             feedbackLabel.setText("Erreur : " + e.getMessage());
             feedbackLabel.setStyle("-fx-text-fill: red;");
         }

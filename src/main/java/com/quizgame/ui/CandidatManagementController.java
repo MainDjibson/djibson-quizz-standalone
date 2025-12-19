@@ -14,7 +14,6 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
-import java.sql.SQLException;
 import java.time.LocalDate;
 
 public class CandidatManagementController {
@@ -37,7 +36,7 @@ public class CandidatManagementController {
 
         // Header
         VBox header = new VBox(10);
-        header.setPadding(new Insets(20));
+        header.setPadding(new Insets(20)); 
         header.setAlignment(Pos.CENTER);
         header.setStyle("-fx-background-color: #1e3c72;");
 
@@ -56,7 +55,7 @@ public class CandidatManagementController {
         prenomCol.setPrefWidth(200);
 
         TableColumn<Candidat, String> nomCol = new TableColumn<>("Nom");
-        nomCol.setCellValueFactory(new PropertyValueFactory<>("nom"));
+        nomCol.setCellValueFactory(new PropertyValueFactory<>("nom")); 
         nomCol.setPrefWidth(200);
 
         TableColumn<Candidat, LocalDate> dateCol = new TableColumn<>("Date de naissance");
@@ -112,7 +111,7 @@ public class CandidatManagementController {
         try {
             candidatList.clear();
             candidatList.addAll(candidatDAO.findAll());
-        } catch (SQLException e) {
+        } catch (Exception e) {
             showError("Erreur", "Impossible de charger les candidats : " + e.getMessage());
         }
     }
@@ -156,7 +155,7 @@ public class CandidatManagementController {
                 try {
                     candidatDAO.delete(selected.getId());
                     loadCandidats();
-                } catch (SQLException e) {
+                } catch (Exception e) {
                     showError("Erreur", "Impossible de supprimer le candidat : " + e.getMessage());
                 }
             }

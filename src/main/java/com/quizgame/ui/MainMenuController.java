@@ -12,7 +12,6 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 
@@ -141,7 +140,7 @@ public class MainMenuController {
             Optional<Candidat> result = dialog.showAndWait();
             return result.orElse(null);
             
-        } catch (SQLException e) {
+        } catch (Exception e) {
             showError("Erreur lors de la récupération des candidats", e.getMessage());
             return null;
         }

@@ -3,7 +3,6 @@ package com.quizgame.services;
 import com.quizgame.dao.*;
 import com.quizgame.models.*;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -51,22 +50,22 @@ public class GameService {
         totalScore += points;
     }
 
-    public List<Question> getQuestionsForManche(int mancheId) throws SQLException {
+    public List<Question> getQuestionsForManche(int mancheId) throws Exception {
         return questionDAO.findByManche(mancheId);
     }
 
-    public List<Reponse> getReponsesForQuestion(int questionId) throws SQLException {
+    public List<Reponse> getReponsesForQuestion(int questionId) throws Exception {
         return reponseDAO.findByQuestion(questionId);
     }
 
-    public Reponse getCorrectAnswer(int questionId) throws SQLException {
+    public Reponse getCorrectAnswer(int questionId) throws Exception {
         return reponseDAO.findCorrectAnswer(questionId);
     }
 
     /**
      * Pour la manche 3 (DUO mode), retourne 2 réponses dont la bonne
      */
-    public List<Reponse> getDuoReponses(int questionId) throws SQLException {
+    public List<Reponse> getDuoReponses(int questionId) throws Exception {
         List<Reponse> allReponses = reponseDAO.findByQuestion(questionId);
         if (allReponses.size() != 4) {
             throw new IllegalStateException("La question doit avoir exactement 4 réponses pour le mode DUO");
@@ -101,60 +100,60 @@ public class GameService {
         return result;
     }
 
-    public List<Manche> getAllManches() throws SQLException {
+    public List<Manche> getAllManches() throws Exception {
         return mancheDAO.findAll();
     }
 
-    public Manche getMancheById(int id) throws SQLException {
+    public Manche getMancheById(int id) throws Exception {
         return mancheDAO.findById(id);
     }
 
     // Getters pour paramètres
-    public int getPointsManche1Cible() throws SQLException {
+    public int getPointsManche1Cible() throws Exception {
         return parametreDAO.getValeurInt("points_manche1_cible", 9);
     }
 
-    public int getNbQuestionsManche1() throws SQLException {
+    public int getNbQuestionsManche1() throws Exception {
         return parametreDAO.getValeurInt("nb_questions_manche1", 10);
     }
 
-    public int getTempsManche1ParQuestion() throws SQLException {
+    public int getTempsManche1ParQuestion() throws Exception {
         return parametreDAO.getValeurInt("temps_manche1_par_question", 15);
     }
 
-    public int getNbQuestionsManche2() throws SQLException {
+    public int getNbQuestionsManche2() throws Exception {
         return parametreDAO.getValeurInt("nb_questions_manche2", 12);
     }
 
-    public int getChronoManche2Secondes() throws SQLException {
+    public int getChronoManche2Secondes() throws Exception {
         return parametreDAO.getValeurInt("chrono_manche2_secondes", 120);
     }
 
-    public int getSerieRequiseManche2() throws SQLException {
+    public int getSerieRequiseManche2() throws Exception {
         return parametreDAO.getValeurInt("serie_requise_manche2", 4);
     }
 
-    public int getSerieMinimaleManche2() throws SQLException {
+    public int getSerieMinimaleManche2() throws Exception {
         return parametreDAO.getValeurInt("serie_minimale_manche2", 3);
     }
 
-    public int getNbQuestionsManche3() throws SQLException {
+    public int getNbQuestionsManche3() throws Exception {
         return parametreDAO.getValeurInt("nb_questions_manche3", 10);
     }
 
-    public int getScoreRequisManche3() throws SQLException {
+    public int getScoreRequisManche3() throws Exception {
         return parametreDAO.getValeurInt("score_requis_manche3", 15);
     }
 
-    public int getNbQuestionsFinale() throws SQLException {
+    public int getNbQuestionsFinale() throws Exception {
         return parametreDAO.getValeurInt("nb_questions_finale", 10);
     }
 
-    public int getScoreRequisFinale() throws SQLException {
+    public int getScoreRequisFinale() throws Exception {
         return parametreDAO.getValeurInt("score_requis_finale", 6);
     }
 
-    public boolean getSonsActives() throws SQLException {
+    public boolean getSonsActives() throws Exception {
         return parametreDAO.getValeurBoolean("sons_actives", true);
     }
 }

@@ -17,7 +17,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.util.Duration;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public class Manche1Controller {
@@ -130,7 +129,7 @@ public class Manche1Controller {
             }
             
             updateScoreBars();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             feedbackLabel.setText("Erreur : " + e.getMessage());
             feedbackLabel.setStyle("-fx-text-fill: red;");
         }
@@ -155,7 +154,7 @@ public class Manche1Controller {
         // Démarrer le timer
         try {
             timeRemaining = gameService.getTempsManche1ParQuestion();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             timeRemaining = 15;
         }
         startTimer();
@@ -207,7 +206,7 @@ public class Manche1Controller {
                     (correctAnswer != null ? correctAnswer.getLibelle() : "N/A"));
                 feedbackLabel.setStyle("-fx-text-fill: #f44336;");
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             feedbackLabel.setText("Erreur : " + e.getMessage());
             feedbackLabel.setStyle("-fx-text-fill: red;");
         }
@@ -233,7 +232,7 @@ public class Manche1Controller {
             if (correctAnswer != null) {
                 feedbackLabel.setText(feedbackLabel.getText() + " La réponse était : " + correctAnswer.getLibelle());
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

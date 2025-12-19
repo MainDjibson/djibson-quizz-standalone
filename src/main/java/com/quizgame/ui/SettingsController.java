@@ -10,8 +10,6 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
-import java.sql.SQLException;
-
 public class SettingsController {
     private final BorderPane view;
     private final ParametreJeuDAO parametreDAO;
@@ -49,7 +47,7 @@ public class SettingsController {
         CheckBox sonsCheckbox = new CheckBox();
         try {
             sonsCheckbox.setSelected(parametreDAO.getValeurBoolean("sons_actives", true));
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         addRow(form, row++, "Sons activés :", sonsCheckbox);
@@ -141,7 +139,7 @@ public class SettingsController {
 
                 showInfo("Succès", "Paramètres enregistrés avec succès !");
                 goBack();
-            } catch (SQLException ex) {
+            } catch (Exception ex) {
                 showError("Erreur", "Impossible de sauvegarder les paramètres : " + ex.getMessage());
             }
         });
@@ -160,7 +158,7 @@ public class SettingsController {
     private String getParam(String cle, String defaut) {
         try {
             return parametreDAO.getValeur(cle, defaut);
-        } catch (SQLException e) {
+        } catch (Exception e) {
             return defaut;
         }
     }

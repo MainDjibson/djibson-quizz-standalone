@@ -13,12 +13,20 @@ public class QuizGameApp extends Application {
 
     @Override
     public void start(Stage stage) {
-        
         primaryStage = stage;
+        
         // UI d'abord
         var root = new MainMenuView().getView();
         var scene = new Scene(root, 1000, 700);
-        scene.getStylesheets().add(getClass().getResource("/com/djibson/quizz/app.css").toExternalForm());
+        
+        // Correction du chemin CSS - ajuste selon ton fichier réel
+        try {
+            scene.getStylesheets().add(
+                getClass().getResource("/app.css").toExternalForm()
+            );
+        } catch (Exception e) {
+            System.err.println("Fichier CSS non trouvé: " + e.getMessage());
+        }
 
         stage.setTitle("DjibsonQuizz");
         stage.setScene(scene);
@@ -33,7 +41,6 @@ public class QuizGameApp extends Application {
             } catch (Throwable ex) {
                 ex.printStackTrace();
                 Platform.runLater(() -> {
-                    // en dev, on quitte proprement
                     Platform.exit();
                     System.exit(1);
                 });
@@ -41,9 +48,6 @@ public class QuizGameApp extends Application {
         }, "db-init");
         t.setDaemon(true);
         t.start();
-
-        stage.setScene(scene);
-        stage.show();
 
         stage.setOnCloseRequest(e -> DatabaseManager.close());
     }

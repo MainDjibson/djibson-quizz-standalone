@@ -2,10 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.quizgame</groupId>
-  <artifactId>quiz-champion</artifactId>
-  <name>Quiz Champion</name>
-  <version>1.0.0</version>
-  <description>Application de jeu de questions-réponses inspirée de "Questions pour un champion"</description>
+  <artifactId>djibson-quizz-standalone</artifactId>
+  <version>1.0-SNAPSHOT</version>
   <build>
     <plugins>
       <plugin>
@@ -14,14 +12,6 @@
         <configuration>
           <source>17</source>
           <target>17</target>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.openjfx</groupId>
-        <artifactId>javafx-maven-plugin</artifactId>
-        <version>0.0.8</version>
-        <configuration>
-          <mainClass>com.quizgame.QuizGameApp</mainClass>
         </configuration>
       </plugin>
       <plugin>
@@ -34,21 +24,9 @@
               <goal>shade</goal>
             </goals>
             <configuration>
-              <shadedArtifactAttached>true</shadedArtifactAttached>
-              <shadedClassifierName>fat</shadedClassifierName>
               <transformers>
                 <transformer>
                   <mainClass>com.quizgame.QuizGameApp</mainClass>
-                  <manifestEntries>
-                    <Multi-Release>true</Multi-Release>
-                  </manifestEntries>
-                </transformer>
-                <transformer />
-                <transformer>
-                  <resource>META-INF/spring.handlers</resource>
-                </transformer>
-                <transformer>
-                  <resource>META-INF/spring.schemas</resource>
                 </transformer>
               </transformers>
               <filters>
@@ -66,45 +44,19 @@
         </executions>
       </plugin>
       <plugin>
-        <artifactId>maven-jar-plugin</artifactId>
-        <version>3.3.0</version>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-maven-plugin</artifactId>
+        <version>0.0.8</version>
         <configuration>
-          <archive>
-            <manifest>
-              <addClasspath>true</addClasspath>
-              <mainClass>com.quizgame.QuizGameApp</mainClass>
-            </manifest>
-          </archive>
+          <mainClass>com.quizgame.QuizGameApp</mainClass>
         </configuration>
       </plugin>
     </plugins>
   </build>
-  <profiles>
-    <profile>
-      <id>windows</id>
-      <properties>
-        <javafx.platform>win</javafx.platform>
-      </properties>
-    </profile>
-    <profile>
-      <id>linux</id>
-      <properties>
-        <javafx.platform>linux</javafx.platform>
-      </properties>
-    </profile>
-    <profile>
-      <id>mac</id>
-      <properties>
-        <javafx.platform>mac</javafx.platform>
-      </properties>
-    </profile>
-  </profiles>
   <properties>
-    <javafx.platform>linux</javafx.platform>
-    <maven.compiler.source>17</maven.compiler.source>
-    <h2.version>2.2.224</h2.version>
     <maven.compiler.target>17</maven.compiler.target>
+    <maven.compiler.source>17</maven.compiler.source>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <javafx.version>21.0.1</javafx.version>
+    <javafx.version>17.0.9</javafx.version>
   </properties>
 </project>

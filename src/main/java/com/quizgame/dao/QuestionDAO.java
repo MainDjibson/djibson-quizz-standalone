@@ -1,7 +1,6 @@
 package com.quizgame.dao;
 
 import com.quizgame.models.Question;
-import com.quizgame.utils.DatabaseManager;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -9,8 +8,8 @@ import java.util.List;
 
 public class QuestionDAO {
 
-    public void insert(Question question) throws SQLException {
-        String sql = "INSERT INTO question (libelle, id_manche, points, difficulte, temps_limite_secondes) VALUES (?, ?, ?, ?, ?)";
+    public void insert(Question question) throws Exception {
+        String sql = "INSERT INTO QUESTION (libelle, id_manche, points, difficulte, temps_limite_secondes) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, question.getLibelle());
@@ -31,8 +30,8 @@ public class QuestionDAO {
         }
     }
 
-    public Question findById(int id) throws SQLException {
-        String sql = "SELECT * FROM question WHERE id = ?";
+    public Question findById(int id) throws Exception {
+        String sql = "SELECT * FROM QUESTION WHERE id = ?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
@@ -44,9 +43,9 @@ public class QuestionDAO {
         return null;
     }
 
-    public List<Question> findByManche(int idManche) throws SQLException {
+    public List<Question> findByManche(int idManche) throws Exception {
         List<Question> questions = new ArrayList<>();
-        String sql = "SELECT * FROM question WHERE id_manche = ? ORDER BY id";
+        String sql = "SELECT * FROM QUESTION WHERE id_manche = ? ORDER BY id";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, idManche);
@@ -58,9 +57,9 @@ public class QuestionDAO {
         return questions;
     }
 
-    public List<Question> findAll() throws SQLException {
+    public List<Question> findAll() throws Exception {
         List<Question> questions = new ArrayList<>();
-        String sql = "SELECT * FROM question ORDER BY id_manche, id";
+        String sql = "SELECT * FROM QUESTION ORDER BY id_manche, id";
         try (Connection conn = DatabaseManager.getConnection();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -71,8 +70,8 @@ public class QuestionDAO {
         return questions;
     }
 
-    public void update(Question question) throws SQLException {
-        String sql = "UPDATE question SET libelle = ?, id_manche = ?, points = ?, difficulte = ?, temps_limite_secondes = ? WHERE id = ?";
+    public void update(Question question) throws Exception {
+        String sql = "UPDATE QUESTION SET libelle = ?, id_manche = ?, points = ?, difficulte = ?, temps_limite_secondes = ? WHERE id = ?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, question.getLibelle());
@@ -89,8 +88,8 @@ public class QuestionDAO {
         }
     }
 
-    public void delete(int id) throws SQLException {
-        String sql = "DELETE FROM question WHERE id = ?";
+    public void delete(int id) throws Exception {
+        String sql = "DELETE FROM QUESTION WHERE id = ?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, id);
@@ -98,7 +97,7 @@ public class QuestionDAO {
         }
     }
 
-    private Question mapResultSet(ResultSet rs) throws SQLException {
+    private Question mapResultSet(ResultSet rs) throws Exception {
         Question q = new Question();
         q.setId(rs.getInt("id"));
         q.setLibelle(rs.getString("libelle"));

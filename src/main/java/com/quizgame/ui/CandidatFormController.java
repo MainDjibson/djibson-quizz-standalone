@@ -5,9 +5,6 @@ import com.quizgame.models.Candidat;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-
-import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.Optional;
 
 public class CandidatFormController {
@@ -20,14 +17,14 @@ public class CandidatFormController {
     }
 
     public Candidat showDialog() {
-        Dialog<Candidat> dialog = new Dialog<>();
+        Dialog<Candidat> dialog = new Dialog<>(); 
         dialog.setTitle(candidat == null ? "Nouveau candidat" : "Modifier le candidat");
         dialog.setHeaderText("Informations du candidat");
 
         ButtonType saveButtonType = new ButtonType("Enregistrer", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
 
-        GridPane grid = new GridPane();
+        GridPane grid = new GridPane(); 
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(20, 150, 10, 10));
@@ -69,7 +66,7 @@ public class CandidatFormController {
                         candidatDAO.update(c);
                     }
                     return c;
-                } catch (SQLException e) {
+                } catch (Exception e) {
                     showError("Erreur", "Impossible de sauvegarder le candidat : " + e.getMessage());
                     return null;
                 }

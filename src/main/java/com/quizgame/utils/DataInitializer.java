@@ -3,8 +3,6 @@ package com.quizgame.utils;
 import com.quizgame.dao.*;
 import com.quizgame.models.*;
 
-import java.sql.SQLException;
-
 public class DataInitializer {
     
     private final MancheDAO mancheDAO;
@@ -19,7 +17,7 @@ public class DataInitializer {
         this.parametreDAO = new ParametreJeuDAO();
     }
 
-    public void initializeData() throws SQLException {
+    public void initializeData() throws Exception {
         // Vérifier si les données existent déjà
         if (mancheDAO.count() > 0) {
             System.out.println("Données déjà initialisées.");
@@ -53,7 +51,7 @@ public class DataInitializer {
         System.out.println("Initialisation terminée avec succès !");
     }
 
-    private void initManche1Questions(int mancheId) throws SQLException {
+    private void initManche1Questions(int mancheId) throws Exception {
         // Manche 1: 15 questions de culture générale avec difficulté progressive
         
         addQuestionWithTextAnswer(mancheId, "Quelle est la capitale de la France ?", 1, "Facile", 15, "Paris");
@@ -73,7 +71,7 @@ public class DataInitializer {
         addQuestionWithTextAnswer(mancheId, "En quelle année est tombé le mur de Berlin ?", 2, "Moyen", 15, "1989");
     }
 
-    private void initManche2Questions(int mancheId) throws SQLException {
+    private void initManche2Questions(int mancheId) throws Exception {
         // Manche 2: 15 questions pour série de 4 à la suite
         
         addQuestionWithTextAnswer(mancheId, "Quelle est la capitale de l'Italie ?", 1, "Facile", null, "Rome");
@@ -93,7 +91,7 @@ public class DataInitializer {
         addQuestionWithTextAnswer(mancheId, "Combien de secondes y a-t-il dans une heure ?", 1, "Moyen", null, "3600");
     }
 
-    private void initManche3Questions(int mancheId) throws SQLException {
+    private void initManche3Questions(int mancheId) throws Exception {
         // Manche 3: 15 questions QCM avec exactement 4 réponses (1 vraie, 3 fausses plausibles)
         
         addMCQQuestion(mancheId, "Quelle est la capitale de l'Espagne ?", 1, "Difficile",
@@ -142,7 +140,7 @@ public class DataInitializer {
             "H2O", "H2O2", "HO2", "H3O");
     }
 
-    private void initManche4Questions(int mancheId) throws SQLException {
+    private void initManche4Questions(int mancheId) throws Exception {
         // Manche 4 (Finale): 15 énigmes TRÈS DIFFICILES
         
         addQuestionWithTextAnswer(mancheId, 
@@ -207,7 +205,7 @@ public class DataInitializer {
     }
 
     private void addQuestionWithTextAnswer(int mancheId, String libelle, int points, 
-                                          String difficulte, Integer tempsLimite, String reponseCorrecte) throws SQLException {
+                                          String difficulte, Integer tempsLimite, String reponseCorrecte) throws Exception {
         Question q = new Question(0, libelle, mancheId, points, difficulte, tempsLimite);
         questionDAO.insert(q);
         
@@ -217,7 +215,7 @@ public class DataInitializer {
     }
 
     private void addMCQQuestion(int mancheId, String libelle, int points, String difficulte,
-                               String reponseCorrecte, String fausse1, String fausse2, String fausse3) throws SQLException {
+                               String reponseCorrecte, String fausse1, String fausse2, String fausse3) throws Exception {
         Question q = new Question(0, libelle, mancheId, points, difficulte, null);
         questionDAO.insert(q);
         
@@ -228,7 +226,7 @@ public class DataInitializer {
         reponseDAO.insert(new Reponse(0, fausse3, false, q.getId()));
     }
 
-    private void initParametres() throws SQLException {
+    private void initParametres() throws Exception {
         // Paramètres par défaut pour toutes les manches
         parametreDAO.upsert("sons_actives", "true");
         

@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ReponseDAO {
 
-    public void insert(Reponse reponse) throws SQLException {
+    public void insert(Reponse reponse) throws Exception {
         String sql = "INSERT INTO reponse (libelle, juste, id_question) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -25,7 +25,7 @@ public class ReponseDAO {
         }
     }
 
-    public Reponse findById(int id) throws SQLException {
+    public Reponse findById(int id) throws Exception {
         String sql = "SELECT * FROM reponse WHERE id = ?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -43,7 +43,7 @@ public class ReponseDAO {
         return null;
     }
 
-    public List<Reponse> findByQuestion(int idQuestion) throws SQLException {
+    public List<Reponse> findByQuestion(int idQuestion) throws Exception {
         List<Reponse> reponses = new ArrayList<>();
         String sql = "SELECT * FROM reponse WHERE id_question = ? ORDER BY id";
         try (Connection conn = DatabaseManager.getConnection();
@@ -62,7 +62,7 @@ public class ReponseDAO {
         return reponses;
     }
 
-    public Reponse findCorrectAnswer(int idQuestion) throws SQLException {
+    public Reponse findCorrectAnswer(int idQuestion) throws Exception {
         String sql = "SELECT * FROM reponse WHERE id_question = ? AND juste = TRUE LIMIT 1";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -80,7 +80,7 @@ public class ReponseDAO {
         return null;
     }
 
-    public void update(Reponse reponse) throws SQLException {
+    public void update(Reponse reponse) throws Exception {
         String sql = "UPDATE reponse SET libelle = ?, juste = ?, id_question = ? WHERE id = ?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -92,7 +92,7 @@ public class ReponseDAO {
         }
     }
 
-    public void delete(int id) throws SQLException {
+    public void delete(int id) throws Exception {
         String sql = "DELETE FROM reponse WHERE id = ?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -101,7 +101,7 @@ public class ReponseDAO {
         }
     }
 
-    public void deleteByQuestion(int idQuestion) throws SQLException {
+    public void deleteByQuestion(int idQuestion) throws Exception {
         String sql = "DELETE FROM reponse WHERE id_question = ?";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
