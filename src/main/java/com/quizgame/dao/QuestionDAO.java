@@ -45,7 +45,7 @@ public class QuestionDAO {
 
     public List<Question> findByManche(int idManche) throws Exception {
         List<Question> questions = new ArrayList<>();
-        String sql = "SELECT * FROM QUESTION WHERE id_manche = ? ORDER BY id";
+        String sql = "SELECT * FROM QUESTION WHERE id_manche = ? ORDER BY RAND()";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setInt(1, idManche);
