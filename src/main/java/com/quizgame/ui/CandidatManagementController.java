@@ -66,7 +66,7 @@ public class CandidatManagementController {
         tableView.setItems(candidatList);
 
         // Buttons
-        HBox buttonBox = new HBox(10);
+        HBox buttonBox = new HBox(10); 
         buttonBox.setPadding(new Insets(20));
         buttonBox.setAlignment(Pos.CENTER);
 

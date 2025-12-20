@@ -1,6 +1,7 @@
 package com.quizgame;
 
 import com.quizgame.dao.DatabaseManager;
+import com.quizgame.ui.MainMenuController;
 import com.quizgame.ui.MainMenuView;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -16,8 +17,8 @@ public class QuizGameApp extends Application {
         primaryStage = stage;
         
         // UI d'abord
-        var root = new MainMenuView().getView();
-        var scene = new Scene(root, 1000, 700);
+        var root = new MainMenuController();
+        var scene = new Scene(root.getView(), 1024, 768);
         
         // Correction du chemin CSS - ajuste selon ton fichier réel
         try {
@@ -50,6 +51,14 @@ public class QuizGameApp extends Application {
         t.start();
 
         stage.setOnCloseRequest(e -> DatabaseManager.close());
+    }
+
+    private void startGame() {
+        // Logique pour démarrer le jeu
+        MainMenuController mainMenu = new MainMenuController();
+        Scene scene = new Scene(mainMenu.getView(), 1024, 768);
+        QuizGameApp.primaryStage.setScene(scene);
+        
     }
 
     public static void main(String[] args) {
