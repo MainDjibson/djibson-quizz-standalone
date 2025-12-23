@@ -63,7 +63,12 @@ public class QuestionManagementController {
         mancheFilter.getItems().clear();
         mancheFilter.getItems().add(new Manche(0, "Toutes les manches"));
         try {
-            mancheFilter.getItems().addAll(mancheDAO.findAll());
+            mancheFilter.getItems().addAll(
+                mancheDAO.findAll()
+                        .stream()
+                        .limit(4)
+                        .toList()
+            );
             System.out.println("=== DEBUG MANCHES ===");
             System.out.println("Nombre de manches dans la BDD : " + mancheFilter.getItems().size());
         } catch (Exception e) {
@@ -296,8 +301,14 @@ public class QuestionManagementController {
             libelleArea.setWrapText(true);
 
             ComboBox<Manche> mancheCombo = new ComboBox<>();
+            mancheCombo.getItems().clear();
             try {
-                mancheCombo.getItems().addAll(mancheDAO.findAll());
+                mancheCombo.getItems().addAll(
+                    mancheDAO.findAll()
+                            .stream()
+                            .limit(4)
+                            .toList()
+                );
             } catch (Exception e) {
                 e.printStackTrace();
             }

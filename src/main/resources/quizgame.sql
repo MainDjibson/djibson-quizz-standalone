@@ -1558,7 +1558,7 @@ INSERT INTO QUESTION (libelle, id_manche, points, difficulte, temps_limite_secon
 INSERT INTO REPONSE (libelle, juste, id_question) VALUES ('La bryologie', TRUE, (SELECT MAX(id) FROM QUESTION));
 INSERT INTO REPONSE (libelle, juste, id_question) VALUES ('La mycologie', FALSE, (SELECT MAX(id) FROM QUESTION));
 INSERT INTO REPONSE (libelle, juste, id_question) VALUES ('La lichénologie', FALSE, (SELECT MAX(id) FROM QUESTION));
-INSERT INTO REPONSE (libence, juste, id_question) VALUES ('La phycologie', FALSE, (SELECT MAX(id) FROM QUESTION));
+INSERT INTO REPONSE (libelle, juste, id_question) VALUES ('La phycologie', FALSE, (SELECT MAX(id) FROM QUESTION));
 
 INSERT INTO QUESTION (libelle, id_manche, points, difficulte, temps_limite_secondes) VALUES ('Quelle est la durée approximative du cycle de Saros (éclipses) ?', 3, 1, 'Difficile', NULL);
 INSERT INTO REPONSE (libelle, juste, id_question) VALUES ('18 ans et 11 jours', TRUE, (SELECT MAX(id) FROM QUESTION));

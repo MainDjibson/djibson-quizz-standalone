@@ -2,10 +2,10 @@ package com.quizgame;
 
 import com.quizgame.dao.DatabaseManager;
 import com.quizgame.ui.MainMenuController;
-import com.quizgame.ui.MainMenuView;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class QuizGameApp extends Application {
@@ -29,7 +29,8 @@ public class QuizGameApp extends Application {
             System.err.println("Fichier CSS non trouvé: " + e.getMessage());
         }
 
-        stage.setTitle("DjibsonQuizz");
+        stage.setTitle("Djibson Quizz");
+        stage.getIcons().add(new Image(getClass().getResourceAsStream("/icons/app.png")));
         stage.setScene(scene);
         stage.show();
         stage.toFront();
