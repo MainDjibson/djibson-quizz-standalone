@@ -14,6 +14,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
+import java.util.ArrayList;
 import java.util.List; 
 import java.util.Optional;
 
@@ -83,8 +84,8 @@ public class QuestionManagementController {
 
         Button btnRefresh = new Button("Actualiser");
         btnRefresh.setOnAction(e -> {
-            // Manche selected = mancheFilter.getSelectionModel().getSelectedItem();
-            // loadQuestions(selected != null ? selected.getId() : 0);
+             Manche selected = mancheFilter.getSelectionModel().getSelectedItem();
+             loadQuestions(selected != null ? selected.getId() : 0);
         });
         
 
@@ -97,6 +98,7 @@ public class QuestionManagementController {
         TableColumn<Question, Integer> idCol = new TableColumn<>("ID");
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
         idCol.setPrefWidth(50);
+
 
         TableColumn<Question, String> libelleCol = new TableColumn<>("Question");
         libelleCol.setCellValueFactory(new PropertyValueFactory<>("libelle"));
@@ -117,6 +119,9 @@ public class QuestionManagementController {
         tableView.getColumns().addAll(idCol, libelleCol, mancheCol, pointsCol, difficulteCol);
         tableView.setItems(questionList);
 
+        // Permettre la sélection multiple (nécessaire pour "Tout sélectionner")
+        tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
         // Buttons
         HBox buttonBox = new HBox(10);
         buttonBox.setPadding(new Insets(20));
@@ -126,21 +131,25 @@ public class QuestionManagementController {
         Button btnEdit = new Button("Modifier");
         Button btnViewReponses = new Button("Voir Réponses");
         Button btnDelete = new Button("Supprimer");
+        Button btnSelectAll = new Button("Tout sélectionner");
         Button btnBack = new Button("Retour au menu");
 
         styleButton(btnAdd, "#4CAF50");
         styleButton(btnEdit, "#2196F3");
         styleButton(btnViewReponses, "#FF9800");
         styleButton(btnDelete, "#f44336");
+        styleButton(btnSelectAll, "#607D8B");
         styleButton(btnBack, "#9E9E9E");
 
         btnAdd.setOnAction(e -> addQuestion());
         btnEdit.setOnAction(e -> editQuestion());
         btnViewReponses.setOnAction(e -> viewReponses());
-        btnDelete.setOnAction(e -> deleteQuestion());
+        // btnDelete.setOnAction(e -> deleteQuestion());
+        btnSelectAll.setOnAction(e -> tableView.getSelectionModel().selectAll());
         btnBack.setOnAction(e -> goBack());
 
-        buttonBox.getChildren().addAll(btnAdd, btnEdit, btnViewReponses, btnDelete, btnBack);
+        // buttonBox.getChildren().addAll(btnAdd, btnEdit, btnViewReponses, btnDelete, btnSelectAll, btnBack);
+        buttonBox.getChildren().addAll(btnAdd, btnEdit, btnViewReponses, btnSelectAll, btnBack);
 
         VBox centerBox = new VBox();
         centerBox.getChildren().addAll(filterBox, tableView);
@@ -210,29 +219,47 @@ public class QuestionManagementController {
     }
 
     private void deleteQuestion() {
-        Question selected = tableView.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            showWarning("Aucune sélection", "Veuillez sélectionner une question à supprimer.");
+    // 1. On récupère une copie figée de la sélection pour éviter les conflits
+        List<Question> selectedItems = new ArrayList<>(tableView.getSelectionModel().getSelectedItems());
+
+        if (selectedItems.isEmpty()) {
+            showWarning("Aucune sélection", "Veuillez sélectionner une ou plusieurs questions à supprimer.");
             return;
         }
 
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmation.setTitle("Confirmation");
-        confirmation.setHeaderText("Supprimer la question ?");
-        confirmation.setContentText("Cette action supprimera aussi toutes les réponses associées.");
+        confirmation.setTitle("Confirmation de suppression");
+        confirmation.setHeaderText("Supprimer " + selectedItems.size() + " question(s) ?");
+        confirmation.setContentText("Cette action est irréversible et supprimera les réponses associées.");
 
         confirmation.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 try {
-                    questionDAO.delete(selected.getId());
-                    Manche selectedManche = mancheFilter.getSelectionModel().getSelectedItem();
-                    loadQuestions(selectedManche != null ? selectedManche.getId() : 0);
+                    for (Question q : selectedItems) {
+                        // Suppression des réponses d'abord
+                        List<Reponse> reponses = reponseDAO.findByQuestion(q.getId());
+                        for (Reponse r : reponses) {
+                            reponseDAO.delete(r.getId());
+                        }
+                        // Puis suppression de la question
+                        questionDAO.delete(q.getId());
+                    }
+
+                    // Rafraîchissement de l'interface
+                    Manche m = mancheFilter.getSelectionModel().getSelectedItem();
+                    loadQuestions(m != null ? m.getId() : 0);
+                    
+                    // Optionnel : vider la sélection
+                    tableView.getSelectionModel().clearSelection();
+
                 } catch (Exception e) {
-                    showError("Erreur", "Impossible de supprimer la question : " + e.getMessage());
+                    e.printStackTrace(); // Pour debug dans la console
+                    showError("Erreur de suppression", "Une erreur est survenue : " + e.getMessage());
                 }
             }
         });
     }
+
 
     private void goBack() {
         MainMenuController mainMenu = new MainMenuController();
@@ -272,9 +299,6 @@ public class QuestionManagementController {
     public BorderPane getView() {
         return view;
     }
-
-    // Dialog interne pour l'édition de questions
-    // Remplacez votre classe interne QuestionFormDialog par celle-ci :
 
     private class QuestionFormDialog extends Dialog<Question> {
         private final Question question;
@@ -571,13 +595,14 @@ public class QuestionManagementController {
             HBox buttonBox = new HBox(10);
             Button btnAdd = new Button("Ajouter");
             Button btnEdit = new Button("Modifier");
-            Button btnDelete = new Button("Supprimer");
+            // Button btnDelete = new Button("Supprimer");
 
             btnAdd.setOnAction(e -> addReponse());
             btnEdit.setOnAction(e -> editReponse());
-            btnDelete.setOnAction(e -> deleteReponse());
+            // btnDelete.setOnAction(e -> deleteReponse());
 
-            buttonBox.getChildren().addAll(btnAdd, btnEdit, btnDelete);
+            // buttonBox.getChildren().addAll(btnAdd, btnEdit, btnDelete);
+            buttonBox.getChildren().addAll(btnAdd, btnEdit);
             vbox.getChildren().addAll(listView, buttonBox);
 
             getDialogPane().setContent(vbox);

@@ -10,7 +10,7 @@ import java.util.List;
 public class ReponseDAO {
 
     public void insert(Reponse reponse) throws Exception {
-        String sql = "INSERT INTO reponse (libelle, juste, id_question) VALUES (?, ?, ?)";
+        String sql = "MERGE INTO reponse (libelle, juste, id_question) KEY(libelle) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, reponse.getLibelle());

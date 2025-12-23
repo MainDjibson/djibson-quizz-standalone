@@ -9,7 +9,7 @@ import java.util.List;
 public class QuestionDAO {
 
     public void insert(Question question) throws Exception {
-        String sql = "INSERT INTO QUESTION (libelle, id_manche, points, difficulte, temps_limite_secondes) VALUES (?, ?, ?, ?, ?)";
+        String sql = "MERGE INTO QUESTION (libelle, id_manche, points, difficulte, temps_limite_secondes) KEY(libelle) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setString(1, question.getLibelle());
