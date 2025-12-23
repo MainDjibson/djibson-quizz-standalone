@@ -274,9 +274,29 @@ public class QuestionManagementController {
     }
 
     // Dialog interne pour l'édition de questions
+    // Remplacez votre classe interne QuestionFormDialog par celle-ci :
+
     private class QuestionFormDialog extends Dialog<Question> {
         private final Question question;
         private final QuestionDAO qDAO = new QuestionDAO();
+        private final ReponseDAO rDAO = new ReponseDAO();
+        private final ObservableList<ReponseTemp> reponsesTemp = FXCollections.observableArrayList();
+        
+        // Classe temporaire pour stocker les réponses avant sauvegarde
+        private class ReponseTemp {
+            String libelle;
+            boolean juste;
+            
+            ReponseTemp(String libelle, boolean juste) {
+                this.libelle = libelle;
+                this.juste = juste;
+            }
+            
+            @Override
+            public String toString() {
+                return (juste ? "✓ " : "✗ ") + libelle;
+            }
+        }
 
         public QuestionFormDialog(Question question) {
             this.question = question;
@@ -290,10 +310,11 @@ public class QuestionManagementController {
             ButtonType saveButtonType = new ButtonType("Enregistrer", ButtonBar.ButtonData.OK_DONE);
             getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
 
-            GridPane grid = new GridPane();
-            grid.setHgap(10);
-            grid.setVgap(10);
-            grid.setPadding(new Insets(20));
+            // === PARTIE QUESTION ===
+            GridPane questionGrid = new GridPane();
+            questionGrid.setHgap(10);
+            questionGrid.setVgap(10);
+            questionGrid.setPadding(new Insets(20));
 
             TextArea libelleArea = new TextArea();
             libelleArea.setPromptText("Libellé de la question");
@@ -335,27 +356,143 @@ public class QuestionManagementController {
                 if (question.getTempsLimiteSecondes() != null) {
                     tempsField.setText(String.valueOf(question.getTempsLimiteSecondes()));
                 }
+                
+                // Charger les réponses existantes
+                try {
+                    List<Reponse> existingReponses = reponseDAO.findByQuestion(question.getId());
+                    for (Reponse r : existingReponses) {
+                        reponsesTemp.add(new ReponseTemp(r.getLibelle(), r.isJuste()));
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             } else {
                 mancheCombo.getSelectionModel().selectFirst();
                 difficulteCombo.getSelectionModel().select("Moyen");
             }
 
-            grid.add(new Label("Libellé :"), 0, 0);
-            grid.add(libelleArea, 1, 0);
-            grid.add(new Label("Manche :"), 0, 1);
-            grid.add(mancheCombo, 1, 1);
-            grid.add(new Label("Points :"), 0, 2);
-            grid.add(pointsField, 1, 2);
-            grid.add(new Label("Difficulté :"), 0, 3);
-            grid.add(difficulteCombo, 1, 3);
-            grid.add(new Label("Temps limite (sec) :"), 0, 4);
-            grid.add(tempsField, 1, 4);
+            questionGrid.add(new Label("Libellé :"), 0, 0);
+            questionGrid.add(libelleArea, 1, 0);
+            questionGrid.add(new Label("Manche :"), 0, 1);
+            questionGrid.add(mancheCombo, 1, 1);
+            questionGrid.add(new Label("Points :"), 0, 2);
+            questionGrid.add(pointsField, 1, 2);
+            questionGrid.add(new Label("Difficulté :"), 0, 3);
+            questionGrid.add(difficulteCombo, 1, 3);
+            questionGrid.add(new Label("Temps limite (sec) :"), 0, 4);
+            questionGrid.add(tempsField, 1, 4);
 
-            getDialogPane().setContent(grid);
+            // === PARTIE RÉPONSES ===
+            VBox reponsesSection = new VBox(10);
+            reponsesSection.setPadding(new Insets(20, 0, 0, 0));
+            
+            Label reponsesTitle = new Label("Réponses :");
+            reponsesTitle.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+            
+            ListView<ReponseTemp> reponsesListView = new ListView<>(reponsesTemp);
+            reponsesListView.setPrefHeight(150);
+            reponsesListView.setCellFactory(param -> new ListCell<>() {
+                @Override
+                protected void updateItem(ReponseTemp item, boolean empty) {
+                    super.updateItem(item, empty);
+                    if (empty || item == null) {
+                        setText(null);
+                        setStyle("");
+                    } else {
+                        setText(item.toString());
+                        setStyle(item.juste ? "-fx-background-color: #c8e6c9;" : "");
+                    }
+                }
+            });
+            
+            // Formulaire d'ajout de réponse
+            HBox ajouterReponseBox = new HBox(10);
+            TextField reponseField = new TextField();
+            reponseField.setPromptText("Nouvelle réponse...");
+            reponseField.setPrefWidth(300);
+            
+            CheckBox justeCheck = new CheckBox("Correcte");
+            
+            Button btnAjouterReponse = new Button("Ajouter");
+            btnAjouterReponse.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
+            btnAjouterReponse.setOnAction(e -> {
+                String texte = reponseField.getText().trim();
+                if (!texte.isEmpty()) {
+                    reponsesTemp.add(new ReponseTemp(texte, justeCheck.isSelected()));
+                    reponseField.clear();
+                    justeCheck.setSelected(false);
+                    reponseField.requestFocus();
+                }
+            });
+            
+            // Permettre d'ajouter avec Enter
+            reponseField.setOnAction(e -> btnAjouterReponse.fire());
+            
+            Button btnSupprimerReponse = new Button("Supprimer");
+            btnSupprimerReponse.setStyle("-fx-background-color: #f44336; -fx-text-fill: white;");
+            btnSupprimerReponse.setOnAction(e -> {
+                ReponseTemp selected = reponsesListView.getSelectionModel().getSelectedItem();
+                if (selected != null) {
+                    reponsesTemp.remove(selected);
+                }
+            });
+            
+            ajouterReponseBox.getChildren().addAll(reponseField, justeCheck, btnAjouterReponse, btnSupprimerReponse);
+            
+            reponsesSection.getChildren().addAll(reponsesTitle, reponsesListView, ajouterReponseBox);
+            
+            // === ASSEMBLY ===
+            VBox mainContent = new VBox(10);
+            mainContent.getChildren().addAll(questionGrid, new Separator(), reponsesSection);
+            
+            getDialogPane().setContent(mainContent);
+            getDialogPane().setPrefWidth(600);
 
+            // === VALIDATION ET SAUVEGARDE ===
             setResultConverter(dialogButton -> {
                 if (dialogButton == saveButtonType) {
+                    // Validation
+                    if (libelleArea.getText().trim().isEmpty()) {
+                        showError("Erreur", "Le libellé de la question est obligatoire.");
+                        return null;
+                    }
+                    
+                    if (reponsesTemp.isEmpty()) {
+                        Alert alert = new Alert(Alert.AlertType.WARNING);
+                        alert.setTitle("Aucune réponse");
+                        alert.setHeaderText("Voulez-vous vraiment enregistrer sans réponse ?");
+                        alert.setContentText("Il est recommandé d'ajouter au moins une réponse.");
+                        
+                        ButtonType btnContinuer = new ButtonType("Enregistrer quand même");
+                        ButtonType btnAnnuler = new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE);
+                        alert.getButtonTypes().setAll(btnContinuer, btnAnnuler);
+                        
+                        Optional<ButtonType> result = alert.showAndWait();
+                        if (result.isEmpty() || result.get() != btnContinuer) {
+                            return null;
+                        }
+                    }
+                    
+                    // Vérifier qu'au moins une réponse est correcte
+                    boolean hasCorrectAnswer = reponsesTemp.stream().anyMatch(r -> r.juste);
+                    if (!reponsesTemp.isEmpty() && !hasCorrectAnswer) {
+                        Alert alert = new Alert(Alert.AlertType.WARNING);
+                        alert.setTitle("Aucune réponse correcte");
+                        alert.setHeaderText("Aucune réponse n'est marquée comme correcte !");
+                        alert.setContentText("Voulez-vous continuer ?");
+                        
+                        ButtonType btnContinuer = new ButtonType("Enregistrer quand même");
+                        ButtonType btnAnnuler = new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE);
+                        alert.getButtonTypes().setAll(btnContinuer, btnAnnuler);
+                        
+                        Optional<ButtonType> result = alert.showAndWait();
+                        if (result.isEmpty() || result.get() != btnContinuer) {
+                            return null;
+                        }
+                    }
+                    
                     try {
+                        // 1. Sauvegarder la question
                         Question q = question != null ? question : new Question();
                         q.setLibelle(libelleArea.getText());
                         Manche selectedManche = mancheCombo.getSelectionModel().getSelectedItem();
@@ -367,13 +504,29 @@ public class QuestionManagementController {
                         }
 
                         if (question == null) {
-                            qDAO.insert(q);
+                            qDAO.insert(q); // q.id est maintenant défini par la BDD
                         } else {
                             qDAO.update(q);
+                            // Supprimer les anciennes réponses
+                            List<Reponse> oldReponses = rDAO.findByQuestion(q.getId());
+                            for (Reponse old : oldReponses) {
+                                rDAO.delete(old.getId());
+                            }
                         }
+                        
+                        // 2. Sauvegarder les réponses
+                        for (ReponseTemp rt : reponsesTemp) {
+                            Reponse r = new Reponse();
+                            r.setLibelle(rt.libelle);
+                            r.setJuste(rt.juste);
+                            r.setIdQuestion(q.getId()); // Utiliser l'ID de la question fraîchement créée/mise à jour
+                            rDAO.insert(r);
+                        }
+                        
                         return q;
                     } catch (Exception e) {
                         showError("Erreur", "Impossible de sauvegarder : " + e.getMessage());
+                        e.printStackTrace();
                         return null;
                     }
                 }

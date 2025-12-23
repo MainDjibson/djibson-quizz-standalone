@@ -8,6 +8,7 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+// AJOUTS (pour lien + navigation)
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
@@ -15,11 +16,6 @@ import javafx.scene.text.FontWeight;
 
 import java.util.List;
 import java.util.Optional;
-
-// AJOUTS (pour lien + navigation)
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
 import java.awt.Desktop;
 import java.net.URI;
 
@@ -27,6 +23,8 @@ public class MainMenuController {
 
     private final VBox view;
     private final CandidatDAO candidatDAO;
+    private Scene mainMenuScene;
+
 
     public MainMenuController() {
         this.candidatDAO = new CandidatDAO();
@@ -239,61 +237,65 @@ public class MainMenuController {
     // AJOUT : Nouvelle scène "À propos du développeur"
     // ==========================
     private void openAboutDeveloper() {
-        VBox root = new VBox(20);
-        root.setAlignment(Pos.TOP_CENTER);
-        root.setPadding(new Insets(50));
-        root.setStyle("-fx-background-color: linear-gradient(to bottom, #1e3c72, #2a5298);");
 
-        Label title = new Label("À propos du développeur");
-        title.setFont(Font.font("Arial", FontWeight.BOLD, 40));
-        title.setStyle("-fx-text-fill: white;");
-
-        Label subtitle = new Label("Djiby NDIAYE");
-        subtitle.setFont(Font.font("Arial", FontWeight.BOLD, 22));
-        subtitle.setStyle("-fx-text-fill: #ffcc00;");
-
-        // TODO: tu peux remplacer ce texte par ta bio finale
-        String aboutText =
-            "Djiby est un développeur devenu Business Analyst, puis chef de projet, et enfin chef d’entreprise.\n\n" +
-            "Il conçoit des applications, accompagne les organisations sur l’analyse fonctionnelle, le pilotage produit, " +
-            "la qualité et la livraison en environnement Agile.\n\n" +
-            "Son objectif : transformer des besoins complexes en solutions simples, robustes et efficaces.\n\n" +
-            "Sur son site, tu trouveras son profil, ses applications, ses expériences, et surtout ses services.";
-
-        TextArea textArea = new TextArea(aboutText);
-        textArea.setWrapText(true);
-        textArea.setEditable(false);
-        textArea.setFocusTraversable(false);
-        textArea.setPrefHeight(320);
-        textArea.setStyle(
-            "-fx-font-size: 14; " +
-            "-fx-background-radius: 10; " +
-            "-fx-control-inner-background: rgba(255,255,255,0.95);"
-        );
-
-        ScrollPane scrollPane = new ScrollPane(textArea);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setPrefViewportHeight(340);
-        scrollPane.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
-
-        // TODO: remplace par ton vrai site
-        String websiteUrl = "https://ton-site.fr";
-
-        Hyperlink link = new Hyperlink(websiteUrl);
-        link.setStyle("-fx-text-fill: #ffcc00; -fx-font-size: 14;");
-        link.setOnAction(e -> openExternalLink(websiteUrl));
-
-        Button backBtn = createMenuButton("Retour au menu");
-        backBtn.setOnAction(e -> {
-            Scene scene = new Scene(getView(), 1024, 768);
-            QuizGameApp.primaryStage.setScene(scene);
-        });
-
-        root.getChildren().addAll(title, subtitle, scrollPane, link, backBtn);
-
-        Scene scene = new Scene(root, 1024, 768);
-        QuizGameApp.primaryStage.setScene(scene);
+    // ✅ Sauvegarde la scène actuelle (menu) une seule fois
+    if (mainMenuScene == null) {
+        mainMenuScene = QuizGameApp.primaryStage.getScene();
     }
+
+    VBox root = new VBox(20);
+    root.setAlignment(Pos.TOP_CENTER);
+    root.setPadding(new Insets(50));
+    root.setStyle("-fx-background-color: linear-gradient(to bottom, #1e3c72, #2a5298);");
+
+    Label title = new Label("À propos du développeur");
+    title.setFont(Font.font("Arial", FontWeight.BOLD, 40));
+    title.setStyle("-fx-text-fill: white;");
+
+    Label subtitle = new Label("Djiby NDIAYE");
+    subtitle.setFont(Font.font("Arial", FontWeight.BOLD, 22));
+    subtitle.setStyle("-fx-text-fill: #ffcc00;");
+
+    String aboutText =
+        "Djiby est un développeur devenu Business Analyst, puis chef de projet, et enfin chef d’entreprise.\n\n" +
+        "Il conçoit des applications, accompagne les organisations sur l’analyse fonctionnelle, le pilotage produit, " +
+        "la qualité et la livraison en environnement Agile.\n\n" +
+        "Son objectif : transformer des besoins complexes en solutions simples, robustes et efficaces.\n\n" +
+        "Sur son site, tu trouveras son profil, ses applications, ses expériences, et surtout ses services.";
+
+    TextArea textArea = new TextArea(aboutText);
+    textArea.setWrapText(true);
+    textArea.setEditable(false);
+    textArea.setFocusTraversable(false);
+    textArea.setPrefHeight(320);
+    textArea.setStyle(
+        "-fx-font-size: 14; " +
+        "-fx-background-radius: 10; " +
+        "-fx-control-inner-background: rgba(255,255,255,0.95);"
+    );
+
+    ScrollPane scrollPane = new ScrollPane(textArea);
+    scrollPane.setFitToWidth(true);
+    scrollPane.setPrefViewportHeight(340);
+    scrollPane.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
+
+    String websiteUrl = "https://www.djibson-consulting.com";
+
+    Hyperlink link = new Hyperlink("www.djibson-consulting.com");
+    link.setStyle("-fx-text-fill: #ffcc00; -fx-font-size: 14;");
+    link.setOnAction(e -> openExternalLink(websiteUrl));
+
+    Button backBtn = createMenuButton("Retour au menu");
+    backBtn.setOnAction(e -> {
+        // ✅ On remet la scène du menu (pas de nouvelle Scene, donc pas d’erreur)
+        QuizGameApp.primaryStage.setScene(mainMenuScene);
+    });
+
+    root.getChildren().addAll(title, subtitle, scrollPane, link, backBtn);
+
+    Scene aboutScene = new Scene(root, 1024, 768);
+    QuizGameApp.primaryStage.setScene(aboutScene);
+}
 
     private void openExternalLink(String url) {
         try {
