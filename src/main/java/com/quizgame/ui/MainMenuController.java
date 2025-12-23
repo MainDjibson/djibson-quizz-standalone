@@ -172,7 +172,7 @@ public class MainMenuController {
         
         Optional<String> result = passwordDialog.showAndWait();
         result.ifPresent(password -> {
-            if ("M@indjibsoN7".equals(passwordField.getText())) {
+            if ("DjibsonQuizz2025".equals(passwordField.getText())) {
                 // Mot de passe correct, ouvrir la page d'administration
                 QuestionManagementController controller = new QuestionManagementController();
                 Scene scene = new Scene(controller.getView(), 1200, 800);

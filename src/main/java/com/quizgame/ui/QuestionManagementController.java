@@ -25,6 +25,7 @@ public class QuestionManagementController {
     private final TableView<Question> tableView;
     private final ObservableList<Question> questionList;
     private ComboBox<Manche> mancheFilter;
+    private Label counterLabel;
 
     public QuestionManagementController() {
         this.questionDAO = new QuestionDAO();
@@ -59,12 +60,16 @@ public class QuestionManagementController {
 
         Label filterLabel = new Label("Filtrer par manche :");
         mancheFilter = new ComboBox<>();
+        mancheFilter.getItems().clear();
         mancheFilter.getItems().add(new Manche(0, "Toutes les manches"));
         try {
             mancheFilter.getItems().addAll(mancheDAO.findAll());
+            System.out.println("=== DEBUG MANCHES ===");
+            System.out.println("Nombre de manches dans la BDD : " + mancheFilter.getItems().size());
         } catch (Exception e) {
             e.printStackTrace();
         }
+        
         mancheFilter.getSelectionModel().selectFirst();
         mancheFilter.setOnAction(e -> {
             Manche selected = mancheFilter.getSelectionModel().getSelectedItem();
@@ -77,7 +82,10 @@ public class QuestionManagementController {
             loadQuestions(selected != null ? selected.getId() : 0);
         });
 
-        filterBox.getChildren().addAll(filterLabel, mancheFilter, btnRefresh);
+        counterLabel = new Label();
+        counterLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1e3c72;");
+
+        filterBox.getChildren().addAll(filterLabel, mancheFilter, btnRefresh, counterLabel);
 
         // Table
         TableColumn<Question, Integer> idCol = new TableColumn<>("ID");
@@ -141,10 +149,14 @@ public class QuestionManagementController {
     private void loadQuestions(int mancheId) {
         try {
             questionList.clear();
+            int totalQuestions = questionDAO.findAll().size();
+            
             if (mancheId == 0) {
                 questionList.addAll(questionDAO.findAll());
+                counterLabel.setText("Total : " + totalQuestions + " question(s)");
             } else {
                 questionList.addAll(questionDAO.findByManche(mancheId));
+                counterLabel.setText(questionList.size() + " question(s) sur cette manche / Total : " + totalQuestions);
             }
         } catch (Exception e) {
             showError("Erreur", "Impossible de charger les questions : " + e.getMessage());
