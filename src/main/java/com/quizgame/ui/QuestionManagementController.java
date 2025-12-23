@@ -78,9 +78,10 @@ public class QuestionManagementController {
 
         Button btnRefresh = new Button("Actualiser");
         btnRefresh.setOnAction(e -> {
-            Manche selected = mancheFilter.getSelectionModel().getSelectedItem();
-            loadQuestions(selected != null ? selected.getId() : 0);
+            // Manche selected = mancheFilter.getSelectionModel().getSelectedItem();
+            // loadQuestions(selected != null ? selected.getId() : 0);
         });
+        
 
         counterLabel = new Label();
         counterLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #1e3c72;");
