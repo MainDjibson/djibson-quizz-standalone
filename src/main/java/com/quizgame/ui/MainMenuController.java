@@ -3,6 +3,7 @@ package com.quizgame.ui;
 import com.quizgame.QuizGameApp;
 import com.quizgame.dao.CandidatDAO;
 import com.quizgame.models.Candidat;
+
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -15,7 +16,15 @@ import javafx.scene.text.FontWeight;
 import java.util.List;
 import java.util.Optional;
 
+// AJOUTS (pour lien + navigation)
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
+import java.awt.Desktop;
+import java.net.URI;
+
 public class MainMenuController {
+
     private final VBox view;
     private final CandidatDAO candidatDAO;
 
@@ -45,6 +54,10 @@ public class MainMenuController {
         Button btnQuestions = createMenuButton("Questions / Réponses");
         Button btnSettings = createMenuButton("Paramètres / Options");
         Button btnRules = createMenuButton("Aide / Règles du jeu");
+
+        // AJOUT : bouton "A propos"
+        Button btnAboutDev = createMenuButton("À propos du développeur");
+
         Button btnQuit = createMenuButton("Quitter");
 
         // Actions
@@ -53,13 +66,17 @@ public class MainMenuController {
         btnQuestions.setOnAction(e -> openQuestionsManagement());
         btnSettings.setOnAction(e -> openSettings());
         btnRules.setOnAction(e -> showRules());
+
+        // AJOUT : action vers nouvelle scène
+        btnAboutDev.setOnAction(e -> openAboutDeveloper());
+
         btnQuit.setOnAction(e -> Platform.exit());
 
         VBox buttonBox = new VBox(15);
         buttonBox.setAlignment(Pos.CENTER);
         buttonBox.getChildren().addAll(
-            btnNewGame, btnManageCandidats, btnQuestions, 
-            btnSettings, btnRules, btnQuit
+            btnNewGame, btnManageCandidats, btnQuestions,
+            btnSettings, btnRules, btnAboutDev, btnQuit
         );
 
         root.getChildren().addAll(title, subtitle, buttonBox);
@@ -107,7 +124,7 @@ public class MainMenuController {
     private Candidat selectOrCreateCandidat() {
         try {
             List<Candidat> candidats = candidatDAO.findAll();
-            
+
             Dialog<Candidat> dialog = new Dialog<>();
             dialog.setTitle("Sélection du candidat");
             dialog.setHeaderText("Choisissez ou créez un candidat");
@@ -139,7 +156,7 @@ public class MainMenuController {
 
             Optional<Candidat> result = dialog.showAndWait();
             return result.orElse(null);
-            
+
         } catch (Exception e) {
             showError("Erreur lors de la récupération des candidats", e.getMessage());
             return null;
@@ -163,13 +180,13 @@ public class MainMenuController {
         passwordDialog.setTitle("Authentification Admin");
         passwordDialog.setHeaderText("Accès protégé - Administration");
         passwordDialog.setContentText("Mot de passe :");
-        
+
         // Masquer le texte du mot de passe
         TextField textField = passwordDialog.getEditor();
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText(textField.getPromptText());
         passwordDialog.getDialogPane().setContent(new VBox(8, new Label("Mot de passe :"), passwordField));
-        
+
         Optional<String> result = passwordDialog.showAndWait();
         result.ifPresent(password -> {
             if ("DjibsonQuizz2025".equals(passwordField.getText())) {
@@ -216,6 +233,78 @@ public class MainMenuController {
             "Bonne chance !"
         );
         alert.showAndWait();
+    }
+
+    // ==========================
+    // AJOUT : Nouvelle scène "À propos du développeur"
+    // ==========================
+    private void openAboutDeveloper() {
+        VBox root = new VBox(20);
+        root.setAlignment(Pos.TOP_CENTER);
+        root.setPadding(new Insets(50));
+        root.setStyle("-fx-background-color: linear-gradient(to bottom, #1e3c72, #2a5298);");
+
+        Label title = new Label("À propos du développeur");
+        title.setFont(Font.font("Arial", FontWeight.BOLD, 40));
+        title.setStyle("-fx-text-fill: white;");
+
+        Label subtitle = new Label("Djiby NDIAYE");
+        subtitle.setFont(Font.font("Arial", FontWeight.BOLD, 22));
+        subtitle.setStyle("-fx-text-fill: #ffcc00;");
+
+        // TODO: tu peux remplacer ce texte par ta bio finale
+        String aboutText =
+            "Djiby est un développeur devenu Business Analyst, puis chef de projet, et enfin chef d’entreprise.\n\n" +
+            "Il conçoit des applications, accompagne les organisations sur l’analyse fonctionnelle, le pilotage produit, " +
+            "la qualité et la livraison en environnement Agile.\n\n" +
+            "Son objectif : transformer des besoins complexes en solutions simples, robustes et efficaces.\n\n" +
+            "Sur son site, tu trouveras son profil, ses applications, ses expériences, et surtout ses services.";
+
+        TextArea textArea = new TextArea(aboutText);
+        textArea.setWrapText(true);
+        textArea.setEditable(false);
+        textArea.setFocusTraversable(false);
+        textArea.setPrefHeight(320);
+        textArea.setStyle(
+            "-fx-font-size: 14; " +
+            "-fx-background-radius: 10; " +
+            "-fx-control-inner-background: rgba(255,255,255,0.95);"
+        );
+
+        ScrollPane scrollPane = new ScrollPane(textArea);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setPrefViewportHeight(340);
+        scrollPane.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
+
+        // TODO: remplace par ton vrai site
+        String websiteUrl = "https://ton-site.fr";
+
+        Hyperlink link = new Hyperlink(websiteUrl);
+        link.setStyle("-fx-text-fill: #ffcc00; -fx-font-size: 14;");
+        link.setOnAction(e -> openExternalLink(websiteUrl));
+
+        Button backBtn = createMenuButton("Retour au menu");
+        backBtn.setOnAction(e -> {
+            Scene scene = new Scene(getView(), 1024, 768);
+            QuizGameApp.primaryStage.setScene(scene);
+        });
+
+        root.getChildren().addAll(title, subtitle, scrollPane, link, backBtn);
+
+        Scene scene = new Scene(root, 1024, 768);
+        QuizGameApp.primaryStage.setScene(scene);
+    }
+
+    private void openExternalLink(String url) {
+        try {
+            if (Desktop.isDesktopSupported()) {
+                Desktop.getDesktop().browse(new URI(url));
+            } else {
+                showError("Impossible d'ouvrir le lien", "Desktop non supporté sur cette plateforme.");
+            }
+        } catch (Exception ex) {
+            showError("Impossible d'ouvrir le lien", ex.getMessage());
+        }
     }
 
     private void showError(String title, String message) {
