@@ -38,11 +38,11 @@ public class MainMenuController {
         root.setStyle("-fx-background-color: linear-gradient(to bottom, #1e3c72, #2a5298);");
 
         // Titre principal
-        Label title = new Label("Quiz Champion");
+        Label title = new Label("Djibson Quizz");
         title.setFont(Font.font("Arial", FontWeight.BOLD, 48));
         title.setStyle("-fx-text-fill: white;");
 
-        Label subtitle = new Label("Questions pour un Champion");
+        Label subtitle = new Label("Le quize TV ...... Version application");
         subtitle.setFont(Font.font("Arial", FontWeight.NORMAL, 24));
         subtitle.setStyle("-fx-text-fill: #ffcc00;");
 
