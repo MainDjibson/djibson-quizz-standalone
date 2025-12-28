@@ -42,7 +42,7 @@ public class MainMenuController {
         title.setFont(Font.font("Arial", FontWeight.BOLD, 48));
         title.setStyle("-fx-text-fill: white;");
 
-        Label subtitle = new Label("Le quize TV ...... Version application");
+        Label subtitle = new Label("Le quizz TV ...... Version application");
         subtitle.setFont(Font.font("Arial", FontWeight.NORMAL, 24));
         subtitle.setStyle("-fx-text-fill: #ffcc00;");
 
@@ -207,7 +207,7 @@ public class MainMenuController {
     private void showRules() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Règles du jeu");
-        alert.setHeaderText("Comment jouer à Quiz Champion ?");
+        alert.setHeaderText("Comment jouer à Djibson Quiz ?");
         alert.setContentText(
             "Le jeu comporte 4 manches :\n\n" +
             "1. 9 POINTS GAGNANTS\n" +
