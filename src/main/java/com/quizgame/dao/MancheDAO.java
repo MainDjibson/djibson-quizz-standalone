@@ -10,18 +10,26 @@ import java.util.List;
 public class MancheDAO {
 
     public void insert(Manche manche) throws Exception {
-        String sql = "INSERT INTO manche (nom) VALUES (?)";
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setString(1, manche.getNom());
-            pstmt.executeUpdate();
-            
-            ResultSet rs = pstmt.getGeneratedKeys();
+    // Calcul de l'ID suivant : MAX + 1 (ou 1 si la table est vide)
+    String sql = "INSERT INTO MANCHE (id, nom) " +
+                 "VALUES ((SELECT COALESCE(MAX(id), 0) + 1 FROM MANCHE m), ?)";
+
+    try (Connection conn = DatabaseManager.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        
+        // Le nom est maintenant le premier (et seul) paramètre "?"
+        pstmt.setString(1, manche.getNom());
+        
+        pstmt.executeUpdate();
+
+        // Récupération de l'ID généré pour mettre à jour l'objet Java
+        try (ResultSet rs = pstmt.getGeneratedKeys()) {
             if (rs.next()) {
                 manche.setId(rs.getInt(1));
             }
         }
     }
+}
 
     public Manche findById(int id) throws Exception {
         String sql = "SELECT * FROM manche WHERE id = ?";

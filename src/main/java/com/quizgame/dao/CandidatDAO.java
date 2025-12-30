@@ -10,21 +10,29 @@ import java.util.List;
 public class CandidatDAO {
 
     public void insert(Candidat candidat) throws Exception {
-        String sql = "INSERT INTO candidat (prenom, nom, date_naissance) VALUES (?, ?, ?)";
+        // Calcul de l'ID : MAX + 1 (ou 1 si la table est vide)
+        String sql = "INSERT INTO CANDIDAT (id, prenom, nom, date_naissance) " +
+                    "VALUES ((SELECT COALESCE(MAX(id), 0) + 1 FROM CANDIDAT c), ?, ?, ?)";
+
         try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            
             pstmt.setString(1, candidat.getPrenom());
             pstmt.setString(2, candidat.getNom());
-            if (candidat.getDateNaissance() != null) {
-                pstmt.setDate(3, Date.valueOf(candidat.getDateNaissance()));
-            } else {
-                pstmt.setNull(3, Types.DATE);
-            }
-            pstmt.executeUpdate();
             
-            ResultSet rs = pstmt.getGeneratedKeys();
-            if (rs.next()) {
-                candidat.setId(rs.getInt(1));
+            if (candidat.getDateNaissance() != null) {
+                pstmt.setDate(3, java.sql.Date.valueOf(candidat.getDateNaissance()));
+            } else {
+                pstmt.setNull(3, java.sql.Types.DATE);
+            }
+
+            pstmt.executeUpdate();
+
+            // Récupération de l'ID généré pour mettre à jour l'objet Java
+            try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    candidat.setId(rs.getInt(1));
+                }
             }
         }
     }

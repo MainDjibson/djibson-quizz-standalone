@@ -10,14 +10,19 @@ import java.util.List;
 public class ParametreJeuDAO {
 
     public void insert(ParametreJeu parametre) throws Exception {
-        String sql = "INSERT INTO parametre_jeu (cle, valeur) VALUES (?, ?)";
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, parametre.getCle());
-            pstmt.setString(2, parametre.getValeur());
-            pstmt.executeUpdate();
-        }
+    // Ici, la clé primaire est la "cle" (ex: 'version', 'nom_du_jeu'), 
+    // donc pas besoin de calcul MAX(id).
+    String sql = "INSERT INTO PARAMETRE_JEU (cle, valeur) VALUES (?, ?)";
+
+    try (Connection conn = DatabaseManager.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        
+        pstmt.setString(1, parametre.getCle());
+        pstmt.setString(2, parametre.getValeur());
+        
+        pstmt.executeUpdate();
     }
+}
 
     public ParametreJeu findByCle(String cle) throws Exception {
         String sql = "SELECT * FROM parametre_jeu WHERE cle = ?";
