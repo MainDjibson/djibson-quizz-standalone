@@ -10,20 +10,27 @@ import java.util.List;
 public class ReponseDAO {
 
     public void insert(Reponse reponse) throws Exception {
-        String sql = "MERGE INTO reponse (libelle, juste, id_question) KEY(libelle) VALUES (?, ?, ?)";
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setString(1, reponse.getLibelle());
-            pstmt.setBoolean(2, reponse.isJuste());
-            pstmt.setInt(3, reponse.getIdQuestion());
-            pstmt.executeUpdate();
-            
-            ResultSet rs = pstmt.getGeneratedKeys();
+    // Calcul de l'ID suivant : MAX + 1 (ou 1 si la table est vide)
+    String sql = "INSERT INTO REPONSE (id, libelle, juste, id_question) " +
+                 "VALUES ((SELECT COALESCE(MAX(id), 0) + 1 FROM REPONSE r), ?, ?, ?)";
+
+    try (Connection conn = DatabaseManager.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        
+        pstmt.setString(1, reponse.getLibelle());
+        pstmt.setBoolean(2, reponse.isJuste());
+        pstmt.setInt(3, reponse.getIdQuestion());
+        
+        pstmt.executeUpdate();
+
+        // Récupération de l'ID calculé par la base de données
+        try (ResultSet rs = pstmt.getGeneratedKeys()) {
             if (rs.next()) {
                 reponse.setId(rs.getInt(1));
             }
         }
     }
+}
 
     public Reponse findById(int id) throws Exception {
         String sql = "SELECT * FROM reponse WHERE id = ?";

@@ -9,26 +9,34 @@ import java.util.List;
 public class QuestionDAO {
 
     public void insert(Question question) throws Exception {
-        String sql = "MERGE INTO QUESTION (libelle, id_manche, points, difficulte, temps_limite_secondes) KEY(libelle) VALUES (?, ?, ?, ?, ?)";
-        try (Connection conn = DatabaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            pstmt.setString(1, question.getLibelle());
-            pstmt.setInt(2, question.getIdManche());
-            pstmt.setInt(3, question.getPoints());
-            pstmt.setString(4, question.getDifficulte());
-            if (question.getTempsLimiteSecondes() != null) {
-                pstmt.setInt(5, question.getTempsLimiteSecondes());
-            } else {
-                pstmt.setNull(5, Types.INTEGER);
-            }
-            pstmt.executeUpdate();
-            
-            ResultSet rs = pstmt.getGeneratedKeys();
+    // La requête utilise COALESCE pour gérer le cas où la table est vide (MAX(id) serait NULL)
+    String sql = "INSERT INTO QUESTION (id, libelle, id_manche, points, difficulte, temps_limite_secondes) " +
+                 "VALUES ((SELECT COALESCE(MAX(id), 0) + 1 FROM QUESTION q), ?, ?, ?, ?, ?)";
+
+    try (Connection conn = DatabaseManager.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        
+        pstmt.setString(1, question.getLibelle());
+        pstmt.setInt(2, question.getIdManche());
+        pstmt.setInt(3, question.getPoints());
+        pstmt.setString(4, question.getDifficulte());
+        
+        if (question.getTempsLimiteSecondes() != null) {
+            pstmt.setInt(5, question.getTempsLimiteSecondes());
+        } else {
+            pstmt.setNull(5, java.sql.Types.INTEGER);
+        }
+
+        pstmt.executeUpdate();
+
+        // Récupération de l'ID qui vient d'être généré par le calcul SQL
+        try (ResultSet rs = pstmt.getGeneratedKeys()) {
             if (rs.next()) {
                 question.setId(rs.getInt(1));
             }
         }
     }
+}
 
     public Question findById(int id) throws Exception {
         String sql = "SELECT * FROM QUESTION WHERE id = ?";
